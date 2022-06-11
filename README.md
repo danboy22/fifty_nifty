@@ -1,3 +1,5 @@
+This project is an interactive react app for documenting travels in the United States.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
