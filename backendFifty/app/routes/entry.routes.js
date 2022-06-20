@@ -2,7 +2,7 @@
 const controller = require("../controllers/entry.controller");
 
 module.exports = function(app) {
-    console.log("here1")
+  
   app.use(function(req, res, next) {
     res.header(
       "Access-Control-Allow-Headers",
@@ -10,7 +10,12 @@ module.exports = function(app) {
     );
     next();
   });
-  console.log("here2")
-  app.post("/api/entry/postEntry", controller.postEntry);
+
+  app.get("/api/entry/getRecent", controller.getRecent)
+
+  app.get("/api/entry/getMine", controller.getMine)
+  
+  app.post("/api/entry/postEntry", controller.postEntry)
+
 
 };

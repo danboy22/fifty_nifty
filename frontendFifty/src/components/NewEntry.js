@@ -5,6 +5,7 @@ import Input from "react-validation/build/input";
 import CheckButton from "react-validation/build/button";
 import EntryService from "../services/entry.service";
 
+
 const required = (value) => {
   
   if (!value) {
@@ -23,11 +24,11 @@ const NewEntry = () => {
   const [date, setDate] = useState("");
   const [location, setLocation] = useState("");
   const [details, setDetails] = useState('')
-  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
-  const navigate = useNavigate();
+  const [successful, setSuccessful] = useState(false);
 
-  const user = localStorage.user
+
+  let user = JSON.parse(localStorage.user).id
   
 
   const onChangeDate = (e) => {
@@ -49,13 +50,13 @@ const NewEntry = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setMessage("");
-    setLoading(true);
+    setSuccessful(false)
     form.current.validateAll();
     if (checkBtn.current.context._errors.length === 0) {
       EntryService.postEntry(date, location, details, user).then(
-        () => {
-          navigate("/profile");
-          window.location.reload();
+        (response) => {
+          setMessage(response.data.message)
+          setSuccessful(true)
         },
         (error) => {
           const resMessage =
@@ -64,23 +65,17 @@ const NewEntry = () => {
               error.response.data.message) ||
             error.message ||
             error.toString();
-          setLoading(false);
           setMessage(resMessage);
+          setSuccessful(false)
         }
       );
-    } else {
-      setLoading(false);
-    }
+    } 
   };
 
   return (
     <div className="col-md-12">
       <div className="card card-container">
-        <img
-          src="//ssl.gstatic.com/accounts/ui/avatar_2x.png"
-          alt="profile-img"
-          className="profile-img-card"
-        />
+        <p>Post a new Travelogue</p>
         <Form onSubmit={handleSubmit} ref={form}>
           <div className="form-group">
             <label htmlFor="date">Date</label>
@@ -116,16 +111,18 @@ const NewEntry = () => {
             />
           </div>
           <div className="form-group">
-            <button className="btn btn-primary btn-block" disabled={loading}>
-              {loading && (
-                <span className="spinner-border spinner-border-sm"></span>
-              )}
+            <button className="btn btn-primary btn-block">
               <span>Submit</span>
             </button>
           </div>
           {message && (
             <div className="form-group">
-              <div className="alert alert-danger" role="alert">
+              <div
+                className={
+                  successful ? "alert alert-success" : "alert alert-danger"
+                }
+                role="alert"
+              >
                 {message}
               </div>
             </div>
